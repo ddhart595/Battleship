@@ -4,27 +4,27 @@ package battleship;
  * Class implementing functionality for the 'Destroyer' ship type.
  * @author Dan Hart
  */
-public class Destroyer extends Ship{
+public class Carrier extends Ship{
 
 	/**
 	 * Static immutable variable holding the starting length.
 	 */
-	private static final int DESTROYER_LENGTH = 2;
+	private static final int CARRIER_LENGTH = 5;
 	
 	/**
 	 * Static immutable variable holding character to represent ship on board.
 	 */
-	private static final char DESTROYER_SYMBOL = 'D';
+	private static final char CARRIER_SYMBOL = 'C';
 			
 	/**
 	 * Call the superclass constructor to set the ship name then explicitly set other parameters.
 	 * @param shipName
 	 */
-	protected Destroyer(String shipName) {
+	protected Carrier(String shipName) {
 		super(shipName);
 		
-		hitsRemaining = DESTROYER_LENGTH;
-		type = SHIPTYPES.DESTROYER;
+		hitsRemaining = CARRIER_LENGTH;
+		type = SHIPTYPES.CARRIER;
 	}
 	
 	/**
@@ -33,8 +33,8 @@ public class Destroyer extends Ship{
 	 */
 	protected char drawShipStatusAtCell(boolean cellHasBeenHit) {
 		if(cellHasBeenHit)
-			return Character.toLowerCase(DESTROYER_SYMBOL);
-		return DESTROYER_SYMBOL;
+			return Character.toLowerCase(CARRIER_SYMBOL);
+		return CARRIER_SYMBOL;
 	}
 	
 	/**
@@ -42,6 +42,6 @@ public class Destroyer extends Ship{
 	 * @return Number of additional shots the ship can take.
 	 */
 	protected int getLength() {
-		return DESTROYER_LENGTH;	
+		return CARRIER_LENGTH;	
 	}
 }

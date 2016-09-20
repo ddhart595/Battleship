@@ -41,12 +41,25 @@ public class GameBoard {
 		this.numRows = numRows;
 		this.numColumns = numColumns;
 		
-		for (int index = 0; index < numRows; index++) 
+		//Initialize the game board cells and the array of ships currently on the board.		
+		gameBoardCells = new ArrayList<ArrayList<Cell>>();
+		
+		//First add numRow ArrayList<Cell> to the game board.
+		for (int index = 0; index < numRows; index++)
 			gameBoardCells.add(new ArrayList<Cell>(numColumns));
+		
+		//Iterate through each row and initialize each cell individually.
+		for(ArrayList<Cell> rows : gameBoardCells)
+			for (int index = 0; index < numColumns; index++)
+				rows.add(new Cell());
+				
+		boardShips = new ArrayList<Ship>();
 	}
 	
 	protected StringBuilder drawBoard() {
 		StringBuilder gameBoard = new StringBuilder();
+		
+		gameBoard.append("+");
 		
 		for (int index = 0; index < numColumns; index++)
 			gameBoard.append("-");
@@ -54,11 +67,13 @@ public class GameBoard {
 		gameBoard.append("+" + NEW_LINE_CHARACTER);
 		
 		for(ArrayList<Cell> row : gameBoardCells) {
+			gameBoard.append("+");
+
 			ListIterator<Cell> rowCells = row.listIterator();
 			
 			while(rowCells.hasNext())
 				gameBoard.append(Character.toString(rowCells.next().draw()));
-			gameBoard.append(NEW_LINE_CHARACTER);
+			gameBoard.append("+" + NEW_LINE_CHARACTER);
 		}
 		
 		gameBoard.append("+");
@@ -94,7 +109,7 @@ public class GameBoard {
 		int sternRow = sternPosition.getRow();
 		int sternColumn = sternPosition.getColumn();
 		
-		if(sternRow < 0 || sternColumn < 0 || sternRow > this.numRows || sternColumn > this.numColumns)
+		if(sternRow < 0 || sternColumn < 0 || sternRow > this.numRows - 1 || sternColumn > this.numColumns - 1)
 			return false;
 		
 		//Ship's stern position is valid, need to make sure ship fits on board.
@@ -102,12 +117,15 @@ public class GameBoard {
 			case NORTH:
 				if(sternRow - shipLength < 0)
 					return false;
+				break;
 			case SOUTH:
-				if(sternRow + shipLength > this.numRows)
+				if(sternRow + shipLength > this.numRows - 1)
 					return false;
+				break;
 			case EAST:
-				if(sternColumn + shipLength > this.numColumns)
+				if(sternColumn + shipLength > this.numColumns - 1)
 					return false;
+				break;
 			case WEST:
 				if(sternColumn - shipLength < 0)
 					return false;
@@ -124,6 +142,7 @@ public class GameBoard {
 					nextRow--;
 					shipLength--;
 				}
+				break;
 			case SOUTH:
 				//Check the cells in the sternColumn column in the shipLength - 1 rows below the stern's position.
 				nextRow = sternRow;
@@ -133,12 +152,13 @@ public class GameBoard {
 					nextRow++;
 					shipLength--;
 				}
+				break;
 			case EAST:
 				//Get an iterator for the cells in the row to which the ship is to be added.
 				rowCellIterator = gameBoardCells.get(sternRow).listIterator();
 				
 				//Set the iterator to the column in which the ship's stern will be placed.
-				while(rowCellIterator.nextIndex() <= sternColumn)
+				while(rowCellIterator.nextIndex() < sternColumn)
 					rowCellIterator.next();
 				
 				//If there is a ship in one of the columns that will be occupied by the ship to be added, return false.
@@ -149,12 +169,13 @@ public class GameBoard {
 						return false;
 					shipLength--;
 				}
+				break;
 			case WEST:
 				//Get an iterator for the cells in the row to which the ship is to be added.
 				rowCellIterator = gameBoardCells.get(sternRow).listIterator();
 				
 				//Set the iterator to the column in which the ship's stern will be placed.
-				while(rowCellIterator.nextIndex() <= sternColumn)
+				while(rowCellIterator.nextIndex() < sternColumn)
 					rowCellIterator.next();
 				
 				//If there is a ship in one of the columns that will be occupied by the ship to be added, return false.
@@ -185,17 +206,19 @@ public class GameBoard {
 					shipCells.add(gameBoardCells.get(sternRow).get(sternColumn));
 					sternRow--;
 					shipLength--;
-				}					
+				}		
+				break;
 			case SOUTH:
 				while(shipLength > 0) {
 					shipCells.add(gameBoardCells.get(sternRow).get(sternColumn));
 					sternRow++;
 					shipLength--;
 				}
+				break;
 			case EAST:
 				//Create a list iterator for the stern's row and fast-forward to the stern position.
 				rowCellIterator = gameBoardCells.get(sternRow).listIterator();
-				while(rowCellIterator.nextIndex() <= sternColumn)
+				while(rowCellIterator.nextIndex() < sternColumn)
 					rowCellIterator.next();
 				
 				//Add each cell covered by the ship to the list of cells.
@@ -204,10 +227,11 @@ public class GameBoard {
 					shipLength--;
 					
 				}
+				break;
 			case WEST:
 				//Create a list iterator for the stern's row and fast-forward to the stern position.
 				rowCellIterator = gameBoardCells.get(sternRow).listIterator();
-				while(rowCellIterator.nextIndex() <= sternColumn)
+				while(rowCellIterator.nextIndex() < sternColumn)
 					rowCellIterator.next();
 				
 				//Add each cell covered by the ship to the list of cells.
@@ -239,7 +263,7 @@ public class GameBoard {
 		int rowAttacked = cellAttacked.getRow();
 		int columnAttacked = cellAttacked.getColumn();
 		
-		if(rowAttacked < 0 || rowAttacked > this.numRows || columnAttacked < 0 || columnAttacked > this.numRows)
+		if(rowAttacked < 0 || rowAttacked > this.numRows - 1 || columnAttacked < 0 || columnAttacked > this.numRows - 1)
 			//Cell attacked is off the board; return null
 			return null;
 		
@@ -268,5 +292,4 @@ public class GameBoard {
 		}
 		return true;
 	}
-
 }

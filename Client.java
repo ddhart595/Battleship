@@ -10,7 +10,7 @@ public class Client {
 	/**
 	 * Instance variable that holds the new line separator depending on the local execution environment.
 	 */
-	final static String NEW_LINE_CHARACTER = System.getProperty("line.spearator");
+	final static String NEW_LINE_CHARACTER = System.getProperty("line.separator");
 	
 	/**
 	 * Each player needs a name, right?
@@ -57,7 +57,7 @@ public class Client {
 		//Initialize the client's game board and its view of the opponent's board.
 		clientBoard = new GameBoard(10,10);
 		opponentBoard = new GameBoard(10,10);
-	}	
+	}
 	
 	/**
 	 * Draws player's and opponent's boards.
@@ -67,6 +67,22 @@ public class Client {
 		this.commandWriter.println("Target board:" + NEW_LINE_CHARACTER + this.opponentBoard.drawBoard() + NEW_LINE_CHARACTER + NEW_LINE_CHARACTER);
 	}
 	
+	/**
+	 * Simple accessor method to return the client's game board.
+	 * Used when player is placing ships on the board.
+	 */
+	protected GameBoard getClientGameBoard() {
+		return this.clientBoard;
+	}
+	
+	/**
+	 * Simple accessor method to get the player's name.
+	 * @return Player's name.
+	 */
+	protected String getPlayerName() {
+		return this.playerName;
+	}
+		
 	/**
 	 * 
 	 */
@@ -80,6 +96,7 @@ public class Client {
 		//While the player and their opponent have at least one ship remaining on their board, continue to process commands.
 		while(clientBoard.hasShipsRemaning() && opponentBoard.hasShipsRemaning()) {
 			this.commandWriter.println("------------------------");
+			this.printMenu();
 			
 			//Print the player's and opponent's board.
 			this.drawBoards();
@@ -91,6 +108,7 @@ public class Client {
 			this.commandWriter.flush();
 			
 			//Get and process next line.
+			while(!(this.commandReader.ready())) {}
 			nextCommand = new StringTokenizer(this.commandReader.readLine(), " ");
 			
 			//Get the user's command character to ensure
@@ -98,7 +116,7 @@ public class Client {
 			
 			switch (userCommand) {
 				case "F":
-					if(nextCommand.countTokens() != 3)
+					if(nextCommand.countTokens() != 2)
 						//Malformed fire command; too many or not enough parameters.
 						break;
 					//Process fire command.
@@ -147,7 +165,17 @@ public class Client {
 	 * Processes user's fire command.
 	 */
 	protected boolean processFireCommand(String rowNumber, String columnNumber) {
-		Ship shipHit = this.opponentBoard.fireMissile(new Position(Integer.valueOf(rowNumber).intValue(), Integer.valueOf(columnNumber).intValue()));
+		Ship shipHit = this.clientGameManager.getOpponent(this).getClientGameBoard().fireMissile(new Position(Integer.valueOf(rowNumber).intValue(), Integer.valueOf(columnNumber).intValue()));
+		
+		//Set the ship for the cell attacked on our representation of the opponent's board equal to the returned ship.
+		//Get the cell attacked.
+		Cell attackedCell = this.opponentBoard.gameBoardCells.get(Integer.parseInt(rowNumber)).get(Integer.parseInt(columnNumber));
+			
+		//Let the cell know it has been attacked.
+		attackedCell.missileAttack();
+			
+		//Set the cell's ship to the ship that was hit.
+		attackedCell.setShip(shipHit);
 		
 		if(shipHit == null) {
 			//Miss; notify player and return false.
@@ -157,8 +185,9 @@ public class Client {
 		}
 		
 		//The player hit one of their opponent's ships; tell them the ship name and return true.
-		this.commandWriter.println("HIT! " + shipHit.getName() + " hit at cell " + rowNumber + " " + columnNumber);
+		this.commandWriter.println("HIT! " + shipHit.getName() + " hit at cell " + rowNumber + " " + columnNumber);		
 		this.commandWriter.flush();
+		
 		return true;
 	}
 	
