@@ -4,7 +4,6 @@ package battleship;
  * Simple class to represent cell positions on board at which ships may be positioned and missiles fired.
  * @author Dan Hart
  */
-
 public class Position {
 	
 	/**

@@ -285,11 +285,12 @@ public class GameBoard {
 	 * Simple method to test and see if any ships are still alive on the board.
 	 * @return Returns true if at least one ship is still remaining, false otherwise.
 	 */
-	protected boolean hasShipsRemaning() {
+	protected boolean hasShipsRemaining() {
+		boolean shipRemaining = false;
 		for(Ship thisShip : boardShips) {
-			if(!thisShip.isAlive())
-				return false;
+			if(thisShip.isAlive())
+				shipRemaining = true;
 		}
-		return true;
+		return shipRemaining;
 	}
 }

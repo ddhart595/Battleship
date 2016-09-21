@@ -6,7 +6,6 @@ import java.util.ArrayList;
  * Superclass for individual ship types. Most functionality will be implemented here.
  * @author Dan Hart
  */
-
 abstract public class Ship {
 	
 	/**
@@ -40,16 +39,12 @@ abstract public class Ship {
 	}
 	
 	/**
-	 * Abstract method to obtain the length/number of hits a ship can sustain.
-	 * @return Ship length.
-	 */
-	protected abstract int getLength();
-	
-	/**
 	 * Abstract class to display the appropriate character representing the ship based on ship's status.
+	 * @param isHit Boolean specifying whether or not the cell has been attacked.
+	 * @return Character representing the ship's status at that cell. 
 	 */
 	protected abstract char drawShipStatusAtCell( boolean isHit );
-	
+
 	/**
 	 * Simple accessor method to return number of additional hits this ship can sustain.
 	 * @return Number of additional hits this ship can sustain.
@@ -57,6 +52,12 @@ abstract public class Ship {
 	protected int getHitsRemaining() {
 		return this.hitsRemaining;
 	}
+	
+	/**
+	 * Abstract method to obtain the length/number of hits a ship can sustain.
+	 * @return Ship length.
+	 */
+	protected abstract int getLength();
 	
 	/**
 	 * Simple accessor method used to determine how many hits a ship could sustain at the beginning of a game.
@@ -87,7 +88,8 @@ abstract public class Ship {
 	 * Simple method used to decrement the hitsRemaining field as destroyer takes damage.
 	 */
 	protected void missileStrike() {
-		hitsRemaining--;
+		if(this.hitsRemaining > 0)
+			hitsRemaining--;
 	}
 	
 	/**

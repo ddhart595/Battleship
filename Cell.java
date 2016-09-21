@@ -49,7 +49,7 @@ public class Cell {
 			return ' ';
 		}
 		return ship.drawShipStatusAtCell( hasBeenAttacked );
-		}
+	}
 	
 	/**
 	 * Returns pointer to ship object contained in this cell.

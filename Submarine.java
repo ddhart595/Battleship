@@ -29,6 +29,7 @@ public class Submarine extends Ship{
 	
 	/**
 	 * Method to determine/return the character representing the ship's status in each cell.
+	 * @param cellHasBeenHit Boolean specifying whether or not the cell has been attacked.
 	 * @return Character representing ship's status in each cell.
 	 */
 	protected char drawShipStatusAtCell(boolean cellHasBeenHit) {
